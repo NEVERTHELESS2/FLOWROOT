@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>감사 레고 블럭 · Phygital 마음 돌봄</title>
+
+  <!-- 폰트: Jua(제목) · Gowun Dodum(본문) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React 18 + Babel (JSX 변환) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
+
+  <style>
+    html, body { margin: 0; padding: 0; background: #E4D6C5; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState } = React;
+
+    /* ================================================================== *
+     * 아이콘 (lucide 아이콘을 인라인 SVG로 포함 — 외부 패키지 불필요)
+     * ================================================================== */
+    function Ic({ size = 24, strokeWidth = 2, fill = "none", className, style, children }) {
+      return (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill={fill}
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+          style={style}
+        >
+          {children}
+        </svg>
+      );
+    }
+
+    const Home = (p) => (
+      <Ic {...p}>
+        <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+        <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      </Ic>
+    );
+    const ScanLine = (p) => (
+      <Ic {...p}>
+        <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+        <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+        <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+        <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+        <path d="M7 12h10" />
+      </Ic>
+    );
+    const PieChart = (p) => (
+      <Ic {...p}>
+        <path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z" />
+        <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+      </Ic>
+    );
+    const Trees = (p) => (
+      <Ic {...p}>
+        <path d="M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z" />
+        <path d="M7 16v6" />
+        <path d="M13 19v3" />
+        <path d="M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5" />
+      </Ic>
+    );
+    const Play = (p) => (
+      <Ic {...p}>
+        <path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" />
+      </Ic>
+    );
+    const Pause = (p) => (
+      <Ic {...p}>
+        <rect x="14" y="3" width="5" height="18" rx="1" />
+        <rect x="5" y="3" width="5" height="18" rx="1" />
+      </Ic>
+    );
+    const X = (p) => (
+      <Ic {...p}>
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </Ic>
+    );
+    const ArrowRight = (p) => (
+      <Ic {...p}>
+        <path d="M5 12h14" />
+        <path d="m12 5 7 7-7 7" />
+      </Ic>
+    );
+    const CheckCircle2 = (p) => (
+      <Ic {...p}>
+        <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+        <path d="m9 11 3 3L22 4" />
+      </Ic>
+    );
+    const Sparkles = (p) => (
+      <Ic {...p}>
+        <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
+        <path d="M20 2v4" />
+        <path d="M22 4h-4" />
+        <circle cx="4" cy="20" r="2" />
+      </Ic>
+    );
+    const Heart = (p) => (
+      <Ic {...p}>
+        <path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+      </Ic>
+    );
+    const Camera = (p) => (
+      <Ic {...p}>
+        <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" />
+        <circle cx="12" cy="13" r="3" />
+      </Ic>
+    );
+    const RefreshCw = (p) => (
+      <Ic {...p}>
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+        <path d="M21 3v5h-5" />
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+        <path d="M8 16H3v5" />
+      </Ic>
+    );
+    const SignalHigh = (p) => (
+      <Ic {...p}>
+        <path d="M2 20h.01" />
+        <path d="M7 20v-4" />
+        <path d="M12 20v-8" />
+        <path d="M17 20V8" />
+      </Ic>
+    );
+    const Wifi = (p) => (
+      <Ic {...p}>
+        <path d="M12 20h.01" />
+        <path d="M2 8.82a15 15 0 0 1 20 0" />
+        <path d="M5 12.859a10 10 0 0 1 14 0" />
+        <path d="M8.5 16.429a5 5 0 0 1 7 0" />
+      </Ic>
+    );
+    const BatteryFull = (p) => (
+      <Ic {...p}>
+        <path d="M10 10v4" />
+        <path d="M14 10v4" />
+        <path d="M22 14v-4" />
+        <path d="M6 10v4" />
+        <rect x="2" y="6" width="16" height="12" rx="2" />
+      </Ic>
+    );
+
+    /* ------------------------------------------------------------------ *
+     * 감사 레고 블럭 — Phygital 우울증 케어 앱 프로토타입
+     * 톤앤매너: 따뜻함 · 미니멀 · 스트레스 프리 · 부드러운 파스텔
+     * ------------------------------------------------------------------ */
+
+    /* ---------- Fonts & Palette ---------- */
+    const fontHead = "'Jua', -apple-system, BlinkMacSystemFont, sans-serif";
+    const fontBody = "'Gowun Dodum', -apple-system, BlinkMacSystemFont, sans-serif";
+
+    const INK = "#5A5248";
+    const INK_SOFT = "#8A8074";
+    const INK_FAINT = "#A79E90";
+    const CREAM = "#FBF6EF";
+
+    /* 레고 블럭 색상 (body / 윗면 스터드 / 아래 베벨) */
+    const BRICK = {
+      green: { body: "#A7CD9B", stud: "#BCD9B1", edge: "#8CBC7C" },
+      yellow: { body: "#F2CE7E", stud: "#F8DEA3", edge: "#E0B65E" },
+      blue: { body: "#9FC1DD", stud: "#B8D3E8", edge: "#80A8CC" },
+      gray: { body: "#8E8A82", stud: "#A7A39B", edge: "#6E6A62" },
+      coral: { body: "#EFA98E", stud: "#F6C4AE", edge: "#DB8B6C" },
+      lav: { body: "#C3B0DB", stud: "#D5C6E8", edge: "#A893CC" },
+      mint: { body: "#9FD8C8", stud: "#B8E4D8", edge: "#80C5B2" },
+    };
+
+    const primaryBtn = {
+      background: "linear-gradient(135deg,#8FBE81 0%,#7CAE6A 100%)",
+      color: "#FFFFFF",
+      borderRadius: 999,
+      padding: "15px 22px",
+      fontSize: 16,
+      fontFamily: fontHead,
+      boxShadow: "0 12px 24px rgba(124,174,106,0.38)",
+    };
+
+    const ghostBtn = {
+      background: "#FFFFFF",
+      color: "#7CAE6A",
+      borderRadius: 999,
+      padding: "14px 22px",
+      fontSize: 15,
+      fontFamily: fontHead,
+      boxShadow: "0 6px 16px rgba(90,82,72,0.08)",
+      border: "1.6px solid #CFE3C5",
+    };
+
+    const card = {
+      background: "#FFFFFF",
+      borderRadius: 26,
+      boxShadow: "0 10px 30px rgba(90,82,72,0.08)",
+    };
+
+    /* 통계 데이터 */
+    const statData = [
+      { label: "일상 만족", sub: "초록색", value: 50, color: BRICK.green.body, deep: "#6FA15C" },
+      { label: "타인 감사", sub: "노란색", value: 20, color: BRICK.yellow.body, deep: "#D9A93F" },
+      { label: "현실 수용", sub: "파란색", value: 20, color: BRICK.blue.body, deep: "#5E8FBE" },
+      { label: "불안 수용", sub: "짙은 회색", value: 10, color: BRICK.gray.body, deep: "#615D56" },
+    ];
+
+    /* 스캔 결과로 보여줄 "나의 마음 탑" (위 -> 아래) */
+    const myTower = [
+      { c: "green", w: 2 },
+      { c: "yellow", w: 3 },
+      { c: "green", w: 3 },
+      { c: "blue", w: 3 },
+      { c: "green", w: 4 },
+      { c: "gray", w: 4 },
+    ];
+
+    /* 연대의 숲 — 익명 사용자들의 마음 탑 */
+    const initialForest = [
+      { id: "f1", likes: 32, liked: false, bricks: [{ c: "green", w: 2 }, { c: "coral", w: 3 }, { c: "green", w: 3 }] },
+      { id: "f2", likes: 18, liked: false, bricks: [{ c: "blue", w: 2 }, { c: "blue", w: 3 }, { c: "yellow", w: 3 }, { c: "green", w: 4 }] },
+      { id: "f3", likes: 47, liked: false, bricks: [{ c: "lav", w: 2 }, { c: "mint", w: 3 }, { c: "lav", w: 4 }] },
+      { id: "f4", likes: 9, liked: false, bricks: [{ c: "yellow", w: 2 }, { c: "green", w: 2 }, { c: "yellow", w: 3 }, { c: "green", w: 3 }] },
+      { id: "f5", likes: 25, liked: false, bricks: [{ c: "mint", w: 2 }, { c: "blue", w: 3 }, { c: "green", w: 3 }] },
+      { id: "f6", likes: 14, liked: false, bricks: [{ c: "coral", w: 2 }, { c: "yellow", w: 3 }, { c: "coral", w: 3 }, { c: "blue", w: 4 }] },
+    ];
+
+    /* 스캔 가이드 박스 모서리 */
+    const cornerBase = { position: "absolute", width: 26, height: 26, borderColor: "#A7CD9B", borderStyle: "solid" };
+    const corners = [
+      { ...cornerBase, top: -2, left: -2, borderWidth: "3px 0 0 3px", borderTopLeftRadius: 12 },
+      { ...cornerBase, top: -2, right: -2, borderWidth: "3px 3px 0 0", borderTopRightRadius: 12 },
+      { ...cornerBase, bottom: -2, left: -2, borderWidth: "0 0 3px 3px", borderBottomLeftRadius: 12 },
+      { ...cornerBase, bottom: -2, right: -2, borderWidth: "0 3px 3px 0", borderBottomRightRadius: 12 },
+    ];
+
+    const styles = `
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    button { background: transparent; border: none; padding: 0; margin: 0; font: inherit; color: inherit; cursor: pointer; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @keyframes softPulse { 0%,100% { opacity: .5; transform: scale(1); } 50% { opacity: .9; transform: scale(1.05); } }
+    @keyframes scanline { 0% { transform: translateY(-82px); opacity: .15; } 50% { opacity: 1; } 100% { transform: translateY(82px); opacity: .15; } }
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes pop { 0% { transform: scale(.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes progressFill { from { width: 0%; } to { width: 100%; } }
+    `;
+
+    /* ---------- 레고 블럭 ---------- */
+    function Brick({ color, studs = 2, unit = 22 }) {
+      const c = BRICK[color] || BRICK.green;
+      const w = studs * unit;
+      return (
+        <div className="flex flex-col items-center">
+          {/* 윗면 스터드 */}
+          <div className="flex relative" style={{ gap: unit * 0.26, zIndex: 2, marginBottom: -unit * 0.07 }}>
+            {Array.from({ length: studs }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: unit * 0.46,
+                  height: unit * 0.3,
+                  borderRadius: 999,
+                  background: c.stud,
+                  boxShadow: "inset 0 1px 1px rgba(255,255,255,0.55)",
+                }}
+              />
+            ))}
+          </div>
+          {/* 블럭 몸체 */}
+          <div
+            style={{
+              width: w,
+              height: unit * 0.82,
+              background: c.body,
+              borderRadius: unit * 0.28,
+              boxShadow: `inset 0 ${-unit * 0.14}px 0 ${c.edge}, 0 ${unit * 0.06}px ${unit * 0.12}px rgba(90,82,72,0.13)`,
+            }}
+          />
+        </div>
+      );
+    }
+
+    function LegoTower({ bricks, unit = 22 }) {
+      return (
+        <div className="flex flex-col items-center">
+          {bricks.map((b, i) => (
+            <div key={i} style={{ marginTop: i === 0 ? 0 : unit * 0.12 }}>
+              <Brick color={b.c} studs={b.w} unit={unit} />
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    /* ---------- 도넛 차트 (custom SVG) ---------- */
+    function Donut({ data, size = 190, stroke = 30 }) {
+      const r = (size - stroke) / 2;
+      const cx = size / 2;
+      const cy = size / 2;
+      const circ = 2 * Math.PI * r;
+      const gap = 6;
+      let acc = 0;
+      return (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#F1EADF" strokeWidth={stroke} />
+          <g transform={`rotate(-90 ${cx} ${cy})`}>
+            {data.map((d, i) => {
+              const frac = d.value / 100;
+              const len = Math.max(frac * circ - gap, 0.001);
+              const el = (
+                <circle
+                  key={i}
+                  cx={cx}
+                  cy={cy}
+                  r={r}
+                  fill="none"
+                  stroke={d.color}
+                  strokeWidth={stroke}
+                  strokeLinecap="butt"
+                  strokeDasharray={`${len} ${circ - len}`}
+                  strokeDashoffset={-acc}
+                />
+              );
+              acc += frac * circ;
+              return el;
+            })}
+          </g>
+        </svg>
+      );
+    }
+
+    /* ---------- 오늘의 문 일러스트 ---------- */
+    function DoorSVG() {
+      return (
+        <svg
+          width="172"
+          height="222"
+          viewBox="0 0 172 222"
+          fill="none"
+          style={{ position: "relative", zIndex: 1, filter: "drop-shadow(0 14px 22px rgba(90,82,72,0.18))" }}
+        >
+          <defs>
+            <linearGradient id="frameG" x1="86" y1="20" x2="86" y2="216" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#FBF1E6" />
+              <stop offset="1" stopColor="#ECD7C0" />
+            </linearGradient>
+            <linearGradient id="doorG" x1="86" y1="30" x2="86" y2="206" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#F9E7D3" />
+              <stop offset="1" stopColor="#F0C8A2" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M18 96 A68 68 0 0 1 154 96 L154 206 Q154 214 146 214 L26 214 Q18 214 18 206 Z"
+            fill="url(#frameG)"
+            stroke="#E6CCB0"
+            strokeWidth="2"
+          />
+          <path
+            d="M32 98 A54 54 0 0 1 140 98 L140 200 Q140 206 134 206 L38 206 Q32 206 32 200 Z"
+            fill="url(#doorG)"
+            stroke="#E3B388"
+            strokeWidth="1.6"
+          />
+          <rect x="52" y="74" width="68" height="46" rx="12" fill="#EBBC93" opacity="0.55" />
+          <rect x="52" y="128" width="68" height="62" rx="12" fill="#EBBC93" opacity="0.55" />
+          <circle cx="124" cy="152" r="5.5" fill="#DD8E6B" />
+          <ellipse cx="86" cy="208" rx="40" ry="6" fill="#F7D9A6" opacity="0.6" />
+        </svg>
+      );
+    }
+
+    /* ---------- 상태바 ---------- */
+    function StatusBar() {
+      return (
+        <div
+          className="absolute left-0 right-0 top-0 z-30 flex items-center justify-between"
+          style={{ height: 36, padding: "0 24px" }}
+        >
+          <span className="text-xs" style={{ color: INK, fontFamily: fontHead }}>9:41</span>
+          <div className="flex items-center gap-1">
+            <SignalHigh size={14} style={{ color: INK }} />
+            <Wifi size={14} style={{ color: INK }} />
+            <BatteryFull size={18} style={{ color: INK }} />
+          </div>
+        </div>
+      );
+    }
+
+    /* ---------- 1. 홈 탭 ---------- */
+    function HomeScreen({ onStart }) {
+      return (
+        <div className="flex min-h-full flex-col items-center px-6">
+          <div className="mt-9 mb-1 text-center">
+            <p className="text-sm" style={{ color: INK_FAINT }}>2026년 6월 5일 금요일</p>
+            <p className="mt-1 text-base" style={{ color: INK_SOFT }}>오늘도 와줘서 고마워요 🌿</p>
+          </div>
+
+          <div className="flex w-full flex-1 flex-col items-center justify-center">
+            <div className="relative mb-2 flex items-center justify-center" style={{ width: 240, height: 262 }}>
+              <div
+                style={{
+                  position: "absolute",
+                  width: 240,
+                  height: 240,
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle, rgba(242,206,126,0.45) 0%, rgba(242,206,126,0) 68%)",
+                  animation: "softPulse 4.5s ease-in-out infinite",
+                }}
+              />
+              <Sparkles size={20} style={{ color: "#E5B85A", position: "absolute", top: 22, right: 40, animation: "floaty 3.5s ease-in-out infinite" }} />
+              <Sparkles size={14} style={{ color: "#A7CD9B", position: "absolute", bottom: 52, left: 34, animation: "floaty 4.2s ease-in-out infinite" }} />
+              <DoorSVG />
+            </div>
+            <h1 className="text-center text-2xl" style={{ color: INK, fontFamily: fontHead }}>오늘의 문</h1>
+            <p className="mt-2 text-center text-sm leading-relaxed" style={{ color: "#9A9082", maxWidth: 240 }}>
+              가벼운 마음으로 한 걸음,
+              <br />
+              오늘의 작은 돌봄을 시작해요
+            </p>
+          </div>
+
+          <button
+            onClick={onStart}
+            className="mb-8 w-full transition active:scale-95"
+            style={{ ...primaryBtn, maxWidth: 330, padding: "17px 22px" }}
+          >
+            <span className="flex items-center justify-center gap-2">
+              오늘의 마음 돌보기를 시작할까요?
+              <ArrowRight size={18} />
+            </span>
+          </button>
+        </div>
+      );
+    }
+
+    /* ---------- 홈: 마이크로 러닝 영상 모달 ---------- */
+    function VideoModal({ isPlaying, setIsPlaying, onClose, onComplete }) {
+      return (
+        <div
+          className="absolute inset-0 z-40 flex items-end"
+          style={{ background: "rgba(60,52,44,0.45)", animation: "fadeUp .25s ease" }}
+        >
+          <div
+            className="w-full p-5"
+            style={{ background: CREAM, borderTopLeftRadius: 34, borderTopRightRadius: 34, animation: "fadeUp .35s ease" }}
+          >
+            <div className="mb-3 flex justify-center">
+              <div style={{ width: 40, height: 5, borderRadius: 999, background: "#E3D9CB" }} />
+            </div>
+
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles size={18} style={{ color: "#E5B85A" }} />
+                <span style={{ color: INK, fontFamily: fontHead, fontSize: 16 }}>오늘의 마음 돌보기</span>
+              </div>
+              <button onClick={onClose} className="rounded-full p-1" style={{ background: "#F0E7D9" }}>
+                <X size={18} style={{ color: INK_SOFT }} />
+              </button>
+            </div>
+
+            {/* 비디오 플레이어 placeholder */}
+            <div
+              className="relative overflow-hidden"
+              style={{ height: 200, borderRadius: 22, background: "linear-gradient(135deg,#9CC0E2 0%,#A7CD9B 100%)" }}
+            >
+              <div style={{ position: "absolute", width: 130, height: 130, borderRadius: "50%", background: "rgba(255,255,255,0.18)", top: -34, right: -22 }} />
+              <div style={{ position: "absolute", width: 84, height: 84, borderRadius: "50%", background: "rgba(255,255,255,0.14)", bottom: 8, left: 18 }} />
+              <span className="absolute text-xs" style={{ top: 12, left: 14, color: "rgba(255,255,255,0.92)" }}>
+                마이크로 러닝 · 2:30
+              </span>
+
+              <button
+                onClick={() => setIsPlaying((p) => !p)}
+                className="absolute transition active:scale-95"
+                style={{
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%,-50%)",
+                  width: 64,
+                  height: 64,
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.94)",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.18)",
+                }}
+              >
+                <span className="flex h-full w-full items-center justify-center">
+                  {isPlaying ? <Pause size={26} style={{ color: INK }} /> : <Play size={26} style={{ color: INK, marginLeft: 3 }} />}
+                </span>
+              </button>
+
+              <div className="absolute" style={{ left: 14, right: 14, bottom: 14 }}>
+                <div style={{ height: 5, borderRadius: 999, background: "rgba(255,255,255,0.35)", overflow: "hidden" }}>
+                  <div
+                    style={{
+                      height: "100%",
+                      borderRadius: 999,
+                      background: "#FFFFFF",
+                      width: isPlaying ? "100%" : "16%",
+                      animation: isPlaying ? "progressFill 14s linear forwards" : "none",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 오늘의 미션 */}
+            <div className="mt-4 flex items-start gap-3 p-4" style={{ background: "#EEF6E9", borderRadius: 20 }}>
+              <div style={{ marginTop: 2 }}>
+                <Brick color="green" studs={2} unit={16} />
+              </div>
+              <div>
+                <p className="mb-1 text-xs" style={{ color: "#6FA15C", fontFamily: fontHead }}>오늘의 미션</p>
+                <p className="text-sm leading-relaxed" style={{ color: INK }}>
+                  초록색 블럭에 일상의 감사를 적고 탑을 쌓아보세요
+                </p>
+              </div>
+            </div>
+
+            <button onClick={onComplete} className="mt-4 w-full transition active:scale-95" style={primaryBtn}>
+              <span className="flex items-center justify-center gap-2">
+                완료하고 AR 스캔하기
+                <ArrowRight size={18} />
+              </span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    /* ---------- 2. AR 스캔 탭 ---------- */
+    function ScanScreen({ status, onScan, onReset, onGoStats }) {
+      if (status === "done") {
+        return (
+          <div className="flex min-h-full flex-col items-center justify-center px-6 py-10">
+            <div className="mb-2 flex items-center gap-2" style={{ animation: "pop .4s ease" }}>
+              <CheckCircle2 size={22} style={{ color: "#7CAE6A" }} />
+              <span style={{ color: INK, fontFamily: fontHead, fontSize: 18 }}>스캔 완료!</span>
+            </div>
+            <p className="mb-8 text-center text-sm" style={{ color: INK_SOFT }}>3D 마음 탑이 저장되었습니다</p>
+
+            <div className="relative flex flex-col items-center" style={{ animation: "pop .5s ease" }}>
+              <Sparkles size={18} style={{ color: "#E5B85A", position: "absolute", top: -8, right: -4, animation: "floaty 3s ease-in-out infinite" }} />
+              <div style={{ animation: "floaty 4s ease-in-out infinite" }}>
+                <LegoTower bricks={myTower} unit={30} />
+              </div>
+              <div style={{ width: 122, height: 18, borderRadius: "50%", background: "rgba(90,82,72,0.12)", marginTop: 10, filter: "blur(2px)" }} />
+            </div>
+
+            <div className="mt-8 flex items-center gap-2 px-4 py-2" style={{ background: "#EEF6E9", borderRadius: 999 }}>
+              <Heart size={14} fill="#A7CD9B" style={{ color: "#7CAE6A" }} />
+              <span className="text-xs" style={{ color: "#6FA15C" }}>마음 탑 보관함에 저장됨</span>
+            </div>
+
+            <div className="mt-8 flex w-full flex-col gap-3" style={{ maxWidth: 300 }}>
+              <button onClick={onGoStats} className="w-full transition active:scale-95" style={primaryBtn}>
+                마음 컬러 통계 보기
+              </button>
+              <button onClick={onReset} className="w-full transition active:scale-95" style={ghostBtn}>
+                다시 스캔하기
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      const scanning = status === "scanning";
+      return (
+        <div
+          className="relative flex min-h-full flex-col items-center"
+          style={{ background: "radial-gradient(circle at 50% 34%, #3B3B43 0%, #25252B 100%)" }}
+        >
+          <div className="px-6 pt-10 text-center">
+            <p style={{ color: "#FFFFFF", fontFamily: fontHead, fontSize: 18, lineHeight: 1.4 }}>
+              완성된 레고 탑을
+              <br />
+              사각형 안에 맞춰주세요
+            </p>
+            <p className="mt-2 text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>밝은 곳에서 천천히 비춰보세요</p>
+          </div>
+
+          <div className="relative" style={{ width: 232, height: 232, marginTop: 28 }}>
+            <div className="absolute inset-0" style={{ borderRadius: 24, border: "1.5px dashed rgba(255,255,255,0.18)" }} />
+            <div className="absolute inset-0 flex items-end justify-center" style={{ opacity: 0.16, paddingBottom: 18 }}>
+              <LegoTower bricks={myTower.slice(2)} unit={22} />
+            </div>
+            {corners.map((c, i) => (
+              <div key={i} style={c} />
+            ))}
+            {!scanning && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: 16,
+                  right: 16,
+                  top: "50%",
+                  height: 2,
+                  borderRadius: 999,
+                  background: "linear-gradient(90deg, rgba(167,205,155,0) 0%, #A7CD9B 50%, rgba(167,205,155,0) 100%)",
+                  boxShadow: "0 0 12px #A7CD9B",
+                  animation: "scanline 2.4s ease-in-out infinite",
+                }}
+              />
+            )}
+            {scanning && (
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center"
+                style={{ borderRadius: 24, background: "rgba(37,37,43,0.55)" }}
+              >
+                <RefreshCw size={30} className="animate-spin" style={{ color: "#A7CD9B" }} />
+                <span className="mt-3 text-sm" style={{ color: "#FFFFFF" }}>마음 탑을 스캔하는 중...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1" />
+
+          <div className="flex flex-col items-center pb-10">
+            <button
+              onClick={onScan}
+              disabled={scanning}
+              className="flex items-center justify-center transition active:scale-95"
+              style={{ width: 74, height: 74, borderRadius: "50%", background: "rgba(255,255,255,0.16)", border: "3px solid rgba(255,255,255,0.85)" }}
+            >
+              <span
+                className="flex items-center justify-center"
+                style={{ width: 54, height: 54, borderRadius: "50%", background: scanning ? "#8A8074" : "#FFFFFF" }}
+              >
+                <Camera size={24} style={{ color: INK }} />
+              </span>
+            </button>
+            <span className="mt-3 text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>스캔하기</span>
+          </div>
+        </div>
+      );
+    }
+
+    /* ---------- 3. 마음 컬러 통계 탭 ---------- */
+    function StatsScreen() {
+      return (
+        <div className="min-h-full px-5 py-8">
+          <div className="mb-1 text-center">
+            <h1 className="text-2xl" style={{ color: INK, fontFamily: fontHead }}>마음 컬러</h1>
+            <p className="mt-1 text-sm" style={{ color: INK_FAINT }}>이번 주에 쌓은 감사 블럭 · 총 20개</p>
+          </div>
+
+          <div className="mt-5 flex flex-col items-center p-6" style={card}>
+            <div className="relative">
+              <Donut data={statData} size={190} stroke={30} />
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl" style={{ color: INK, fontFamily: fontHead }}>20</span>
+                <span className="text-xs" style={{ color: INK_FAINT }}>개의 감사</span>
+              </div>
+            </div>
+
+            <div className="mt-5 flex w-full flex-col gap-3">
+              {statData.map((s) => (
+                <div key={s.label} className="flex items-center">
+                  <span style={{ width: 12, height: 12, borderRadius: 4, background: s.color, display: "inline-block" }} />
+                  <span className="ml-3 text-sm" style={{ color: INK, fontFamily: fontHead }}>{s.label}</span>
+                  <span className="ml-2 text-xs" style={{ color: "#B3A99B" }}>{s.sub}</span>
+                  <span className="ml-auto text-sm" style={{ color: s.deep, fontFamily: fontHead }}>{s.value}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 p-5" style={{ ...card, background: "#EEF6E9" }}>
+            <div className="mb-2 flex items-center gap-2">
+              <Sparkles size={18} style={{ color: "#7CAE6A" }} />
+              <span className="text-sm" style={{ color: "#5E7C4F", fontFamily: fontHead }}>이번 주 마음 날씨</span>
+            </div>
+            <p className="text-sm leading-relaxed" style={{ color: INK }}>
+              이번 주는 일상의 소소한 기쁨을 아주 잘 발견하셨네요! 초록 블럭이 가장 높이 쌓였어요. 작은 만족들이 모여 단단한 마음의 탑이 되고 있어요. 🌱
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    /* ---------- 4. 연대의 숲 탭 ---------- */
+    function ForestScreen({ forest, onLike }) {
+      return (
+        <div className="min-h-full px-5 py-8">
+          <div className="mb-1 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Trees size={20} style={{ color: "#7CAE6A" }} />
+              <h1 className="text-2xl" style={{ color: INK, fontFamily: fontHead }}>연대의 숲</h1>
+            </div>
+            <p className="mx-auto mt-2 text-sm leading-relaxed" style={{ color: INK_FAINT, maxWidth: 280 }}>
+              이름도, 말도 없이.
+              <br />
+              마음의 탑으로 서로의 오늘을 응원해요
+            </p>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-4">
+            {forest.map((t) => (
+              <div key={t.id} className="flex flex-col items-center p-3" style={card}>
+                <div className="flex items-end justify-center" style={{ height: 120, width: "100%" }}>
+                  <div className="flex flex-col items-center">
+                    <LegoTower bricks={t.bricks} unit={16} />
+                    <div style={{ width: 60, height: 10, borderRadius: "50%", background: "rgba(90,82,72,0.10)", marginTop: 6, filter: "blur(1px)" }} />
+                  </div>
+                </div>
+                <button
+                  onClick={() => onLike(t.id)}
+                  className="mt-2 flex items-center gap-1 transition active:scale-95"
+                  style={{ background: t.liked ? "#FCEAE2" : "#F4EFE7", borderRadius: 999, padding: "6px 13px" }}
+                >
+                  <Heart
+                    size={15}
+                    fill={t.liked ? "#EFA98E" : "none"}
+                    style={{ color: t.liked ? "#DB8B6C" : "#B3A99B" }}
+                  />
+                  <span className="text-xs" style={{ color: t.liked ? "#DB8B6C" : "#A79E90", fontFamily: fontHead }}>{t.likes}</span>
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 mb-2 text-center text-xs" style={{ color: "#C3B9AB" }}>따뜻한 불빛으로 마음을 전해보세요</p>
+        </div>
+      );
+    }
+
+    /* ---------- 하단 네비게이션 바 ---------- */
+    function BottomNav({ tab, setTab }) {
+      const items = [
+        { key: "home", label: "홈", Icon: Home },
+        { key: "scan", label: "AR 스캔", Icon: ScanLine },
+        { key: "stats", label: "통계", Icon: PieChart },
+        { key: "forest", label: "연대의 숲", Icon: Trees },
+      ];
+      return (
+        <nav
+          className="absolute bottom-0 left-0 right-0 z-50 flex"
+          style={{
+            height: 78,
+            background: "rgba(255,255,255,0.97)",
+            borderTop: "1px solid #EFE7DA",
+            boxShadow: "0 -6px 20px rgba(90,82,72,0.06)",
+            paddingBottom: 6,
+          }}
+        >
+          {items.map(({ key, label, Icon }) => {
+            const active = tab === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className="flex flex-1 flex-col items-center justify-center gap-1 transition active:scale-95"
+              >
+                <span
+                  className="flex items-center justify-center transition"
+                  style={{ width: 46, height: 30, borderRadius: 14, background: active ? "#EAF4E4" : "transparent" }}
+                >
+                  <Icon size={21} strokeWidth={active ? 2.4 : 2} style={{ color: active ? "#6FA15C" : "#B7AE9F" }} />
+                </span>
+                <span
+                  className="text-xs"
+                  style={{ color: active ? "#6FA15C" : "#B7AE9F", fontFamily: active ? fontHead : fontBody }}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
+      );
+    }
+
+    /* ---------- 앱 (SPA 컨테이너) ---------- */
+    function App() {
+      const [tab, setTab] = useState("home");
+      const [showVideo, setShowVideo] = useState(false);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [scanStatus, setScanStatus] = useState("idle"); // idle | scanning | done
+      const [forest, setForest] = useState(initialForest);
+
+      const handleScan = () => {
+        if (scanStatus !== "idle") return;
+        setScanStatus("scanning");
+        setTimeout(() => setScanStatus("done"), 1700);
+      };
+
+      const goScan = () => {
+        setShowVideo(false);
+        setIsPlaying(false);
+        setScanStatus("idle");
+        setTab("scan");
+      };
+
+      const toggleLike = (id) =>
+        setForest((prev) =>
+          prev.map((t) => (t.id === id ? { ...t, liked: !t.liked, likes: t.likes + (t.liked ? -1 : 1) } : t))
+        );
+
+      let screen = null;
+      if (tab === "home") screen = <HomeScreen onStart={() => { setShowVideo(true); setIsPlaying(false); }} />;
+      else if (tab === "scan")
+        screen = <ScanScreen status={scanStatus} onScan={handleScan} onReset={() => setScanStatus("idle")} onGoStats={() => setTab("stats")} />;
+      else if (tab === "stats") screen = <StatsScreen />;
+      else if (tab === "forest") screen = <ForestScreen forest={forest} onLike={toggleLike} />;
+
+      return (
+        <div
+          className="flex w-full items-center justify-center"
+          style={{
+            minHeight: "100vh",
+            background: "linear-gradient(160deg,#EDE4D7 0%,#E1D3C2 100%)",
+            padding: 16,
+            fontFamily: fontBody,
+          }}
+        >
+          <style>{styles}</style>
+          <div
+            className="relative overflow-hidden"
+            style={{
+              width: 390,
+              maxWidth: "100%",
+              height: 812,
+              maxHeight: "94vh",
+              background: CREAM,
+              borderRadius: 46,
+              boxShadow: "0 30px 70px rgba(60,52,44,0.35), 0 0 0 10px #1f1f24, 0 0 0 12px #34343c",
+            }}
+          >
+            <StatusBar />
+            <div
+              key={tab}
+              className="absolute left-0 right-0 overflow-y-auto"
+              style={{ top: 36, bottom: 78, animation: "fadeUp .4s ease" }}
+            >
+              {screen}
+            </div>
+            <BottomNav tab={tab} setTab={setTab} />
+            {showVideo && (
+              <VideoModal
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+                onClose={() => { setShowVideo(false); setIsPlaying(false); }}
+                onComplete={goScan}
+              />
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    /* ---------- 렌더 ---------- */
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
